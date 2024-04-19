@@ -49,12 +49,12 @@ All of the above are cross-platform.
 
 ## Scripts
 
+The scripts below are all PowerShell scripts, and need to be launched from a PowerShell shell.
+
+> Use `Get-Help name-of-the-script.ps1` to see the documentation.
+
 - 💻 `config-benchmarks.ps1`
   - Configures the benchmarks. Running it with no args restores the default config, which is the same used in the paper.
-  - For example:
-`
-    config-benchmarks.ps1 -sanityCheck $false -numberOfPairs 100 -rngSeed 4321 -rngMaxInteger 100 -largestExtensionsThreshold 500
-`
 - 💻 `run-benchmarks.ps1`
   - Runs all benchmarks, saving the results in 📁 `results`.
 - 💻 `make-plots.ps1`
