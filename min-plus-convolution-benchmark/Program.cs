@@ -318,9 +318,7 @@ public static class Globals {
 #if PROFILE
 [EtwProfiler]
 #endif
-// [SimpleJob(warmupCount: 0, iterationCount: 1)]
-// [SimpleJob(warmupCount: 1, iterationCount: 3)]
-[SimpleJob(warmupCount: 2, iterationCount: 5)]
+[SimpleJob()]
 public class IsoConvolutionBalancedStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
@@ -412,9 +410,7 @@ public class IsoConvolutionBalancedStaircaseBenchmarks
 #if PROFILE
 [EtwProfiler]
 #endif
-// [SimpleJob(warmupCount: 0, iterationCount: 1)]
-// [SimpleJob(warmupCount: 1, iterationCount: 3)]
-[SimpleJob(warmupCount: 2, iterationCount: 5)]
+[SimpleJob()]
 public class IsoConvolutionHorizontalStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
@@ -527,9 +523,7 @@ public class IsoConvolutionHorizontalStaircaseBenchmarks
 #if PROFILE
 [EtwProfiler]
 #endif
-// [SimpleJob(warmupCount: 0, iterationCount: 1)]
-// [SimpleJob(warmupCount: 1, iterationCount: 3)]
-[SimpleJob(warmupCount: 2, iterationCount: 5)]
+[SimpleJob()]
 public class IsoConvolutionVerticalStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
@@ -643,9 +637,7 @@ public class IsoConvolutionVerticalStaircaseBenchmarks
 #if PROFILE
 [EtwProfiler]
 #endif
-// [SimpleJob(warmupCount: 0, iterationCount: 1)]
-// [SimpleJob(warmupCount: 1, iterationCount: 3)]
-[SimpleJob(warmupCount: 2, iterationCount: 5)]
+[SimpleJob()]
 public class IsoConvolutionHorizontalKTradeoffStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
@@ -787,6 +779,21 @@ public static class RngRationalsExtensions
             throw new InvalidOperationException();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
