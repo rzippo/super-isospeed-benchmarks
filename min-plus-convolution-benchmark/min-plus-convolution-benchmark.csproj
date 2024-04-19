@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>min-plus-convolution-benchmark</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DebugType>pdbonly</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <DefineConstants>SANITY_CHECK,SANITY_CHECK_ALL_ALGS</DefineConstants>
+    </PropertyGroup>
+  
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+      <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.12" />
+    </ItemGroup>
+  
+    <ItemGroup>
+      <ProjectReference Include="..\nancy\Nancy\Nancy\Nancy.csproj" />
+    </ItemGroup>
+    
+</Project>
+
+
+
+
+
+
+

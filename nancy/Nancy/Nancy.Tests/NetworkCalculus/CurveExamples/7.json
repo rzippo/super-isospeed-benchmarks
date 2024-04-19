@@ -1,0 +1,34 @@
+{
+    "type": "curve",
+    "baseSequence": {
+        "elements": [
+            {                
+                "type": "point",
+                "time": 0,
+                "value": 0
+            },
+            {
+                "type": "segment",
+                "startTime": 0,
+                "endTime": 30,
+                "slope": 0,
+                "rightLimitAtStartTime": 0
+            },
+            {                
+                "type": "point",
+                "time": 30,
+                "value": 10
+            },
+            {
+                "type": "segment",
+                "startTime": 30,
+                "endTime": 60,
+                "slope": 0,
+                "rightLimitAtStartTime": 10
+            }
+        ]
+    },
+    "pseudoPeriodStart": 30,
+    "pseudoPeriodLength": 30,
+    "pseudoPeriodHeight": 10
+}
