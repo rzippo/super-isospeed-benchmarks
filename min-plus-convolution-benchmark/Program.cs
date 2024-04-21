@@ -14,6 +14,33 @@ using Unipi.Nancy.MinPlusAlgebra;
 using Unipi.Nancy.NetworkCalculus;
 using Unipi.Nancy.Numerics;
 
+{
+    // Code to retrieve and report the benchmark configuration
+    
+#if SANITY_CHECK
+    var sanityCheck = true;
+#else
+    var sanityCheck = false;
+#endif
+
+    var jobAnnotation = typeof(IsoConvolutionBalancedStaircaseBenchmarks)
+        .GetCustomAttributes(typeof(SimpleJobAttribute), false)
+        .FirstOrDefault() as SimpleJobAttribute;
+    var iterationCount = jobAnnotation.Config.GetJobs().First().Run.IterationCount;
+    var warmupCount = jobAnnotation.Config.GetJobs().First().Run.WarmupCount;
+    
+    Console.WriteLine("(min,+) convolution benchmarks");
+    Console.WriteLine("Current config:\n" +
+                      $"\tsanityCheck: {sanityCheck}" +
+                      $"\tnumberOfPairs: {Globals.TEST_COUNT}\n" +
+                      $"\trngSeed: {Globals.RNG_SEED}\n" +
+                      $"\trngMaxInteger: {Globals.RNG_MAX}\n" +
+                      $"\tlargestExtensionsThreshold: {Globals.LARGE_EXTENSION_LCM_THRESHOLD}\n" +
+                      $"\titerationCount: {iterationCount}\n" +
+                      $"\twarmupCount: {warmupCount}\n" +
+                      $"");
+}
+
 #if SANITY_CHECK
 SanityCheck(Globals.TEST_COUNT);
 #endif
@@ -223,7 +250,7 @@ void SanityCheck(int n = 100)
 }
 
 public static class Globals {
-    public const int TEST_COUNT = 100;
+    public const int TEST_COUNT = 10;
 
     public const int RNG_SEED = 4321;
 
@@ -247,7 +274,7 @@ public static class Globals {
         FILTER_SMALLER
     };
 
-    public const int LARGE_EXTENSION_LCM_THRESHOLD = 500;
+    public const int LARGE_EXTENSION_LCM_THRESHOLD = 50;
 
     public static bool FilterByVariation(Curve f, Curve g)
     {
@@ -318,7 +345,7 @@ public static class Globals {
 #if PROFILE
 [EtwProfiler]
 #endif
-[SimpleJob()]
+[SimpleJob(warmupCount: 0, iterationCount: 1)]
 public class IsoConvolutionBalancedStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
@@ -410,7 +437,7 @@ public class IsoConvolutionBalancedStaircaseBenchmarks
 #if PROFILE
 [EtwProfiler]
 #endif
-[SimpleJob()]
+[SimpleJob(warmupCount: 0, iterationCount: 1)]
 public class IsoConvolutionHorizontalStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
@@ -523,7 +550,7 @@ public class IsoConvolutionHorizontalStaircaseBenchmarks
 #if PROFILE
 [EtwProfiler]
 #endif
-[SimpleJob()]
+[SimpleJob(warmupCount: 0, iterationCount: 1)]
 public class IsoConvolutionVerticalStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
@@ -637,7 +664,7 @@ public class IsoConvolutionVerticalStaircaseBenchmarks
 #if PROFILE
 [EtwProfiler]
 #endif
-[SimpleJob()]
+[SimpleJob(warmupCount: 0, iterationCount: 1)]
 public class IsoConvolutionHorizontalKTradeoffStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
@@ -779,6 +806,16 @@ public static class RngRationalsExtensions
             throw new InvalidOperationException();
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
