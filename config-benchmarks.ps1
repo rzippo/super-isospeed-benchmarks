@@ -48,7 +48,7 @@ param (
     [UInt64]
     $largestExtensionsThreshold = 500,
 
-    # If set greater than 0, all benchmarks are set to run with the given number of warmup runs.
+    # If set greater or equal than 0, all benchmarks are set to run with the given number of warmup runs.
     # If not, BenchmarkDotNet handles it automatically, see https://benchmarkdotnet.org/articles/configs/jobs.html 
     [Parameter()]
     [UInt64]
@@ -137,12 +137,12 @@ function setJobs($programPath)
 {
     $programContent = (Get-Content -Raw $programPath);
     $jobLine;
-    if(($warmupCount -le 0) -and ($iterationCount -le 0))
+    if(($warmupCount -lt 0) -and ($iterationCount -le 0))
     {
         # BenchmarkDotNet handles both automatically
         $jobLine = "[SimpleJob()]"
     }
-    elseif ($warmupCount -le 0) {
+    elseif ($warmupCount -lt 0) {
         # BenchmarkDotNet handles warmup automatically, but not iterations
         $jobLine = "[SimpleJob(iterationCount: $iterationCount)]"
     }
