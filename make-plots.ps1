@@ -42,3 +42,39 @@ foreach ($benchmarkResultsFolder in $benchmarkResultsFolders)
 }
 
 # then convert...
+
+$tikzToPdfRoot = "$PSScriptRoot/tikz-to-pdf/tikz-to-pdf";
+$tikzToPdfCsproj = "$tikzToPdfRoot/tikz-to-pdf.csproj";
+
+$dotnetOutput = dotnet publish -c Release $tikzToPdfCsproj;
+
+if($IsWindows) {
+    $tikzToPdfExe = "$tikzToPdfRoot/bin/Release/net8.0/publish/tikz-to-pdf.exe"
+}
+else {
+    $tikzToPdfExe = "$tikzToPdfRoot/bin/Release/net8.0/publish/tikz-to-pdf"
+}
+
+$tikzFiles = Get-ChildItem -Recurse -Path $resultsPath -Filter "*.tikz";
+$tikzFilesCounter = 0;
+$tikzFilesTotal = $tikzFiles.Length;
+foreach ($tikzFile in $tikzFiles) 
+{
+    Write-Progress -Activity "Converting .tikz to .pdf and .png" -Status "$tikzFilesCounter of $tikzFilesTotal" -PercentComplete ($tikzFilesCounter / $tikzFilesTotal);
+    $tikzFilesCounter++;
+
+    $pdfFile = "$tikzFile.pdf"
+    $pngFile = "$tikzFile.png"
+
+    if($force) {
+        $skip = $false
+    } 
+    else {
+        $skip = (Test-Path $pdfFile) -and (Test-Path $pngFile);
+    }
+
+    if(-not $skip)
+    {
+        & $tikzToPdfExe $tikzFile --png
+    }
+}
