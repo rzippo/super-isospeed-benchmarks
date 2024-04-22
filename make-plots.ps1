@@ -15,6 +15,11 @@ param (
     $force = $false
 )
 
+Write-Host " -- Making plots from results";
+Write-Host " --- Making .tikz plots";
+
+# first make the tikz...
+
 $benchmarkResultsToTikzRoot = "$PSScriptRoot/benchmark-results-to-tikz";
 $benchmarkResultsToTikzCsproj = "$benchmarkResultsToTikzRoot/benchmark-results-to-tikz.csproj";
 
@@ -55,12 +60,13 @@ else {
     $tikzToPdfExe = "$tikzToPdfRoot/bin/Release/net8.0/publish/tikz-to-pdf"
 }
 
+Write-Host " --- Converting .tikz to .pdf and .png:";
 $tikzFiles = Get-ChildItem -Recurse -Path $resultsPath -Filter "*.tikz";
 $tikzFilesCounter = 0;
 $tikzFilesTotal = $tikzFiles.Length;
 foreach ($tikzFile in $tikzFiles) 
 {
-    Write-Progress -Activity "Converting .tikz to .pdf and .png" -Status "$tikzFilesCounter of $tikzFilesTotal" -PercentComplete ($tikzFilesCounter / $tikzFilesTotal);
+    Write-Host -NoNewline "`r`t $tikzFilesCounter of $tikzFilesTotal";
     $tikzFilesCounter++;
 
     $pdfFile = "$tikzFile.pdf"
@@ -78,3 +84,4 @@ foreach ($tikzFile in $tikzFiles)
         & $tikzToPdfExe $tikzFile --png
     }
 }
+Write-Host "`r`t $tikzFilesTotal of $tikzFilesTotal"

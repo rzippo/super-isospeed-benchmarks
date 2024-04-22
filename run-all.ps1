@@ -79,6 +79,8 @@ param (
     $iterationCount = 0
 )
 
+Write-Host " - Configuring the benchmarks";
+
 .\config-benchmarks.ps1 `
     -sanityCheck $sanityCheck `
     -numberOfPairs $numberOfPairs `
@@ -89,6 +91,10 @@ param (
     -warmupCount $warmupCount `
     -iterationCount $iterationCount
 
+Write-Host " - Running the benchmarks";
+
 .\run-benchmarks.ps1
 
-# do the other steps
+Write-Host " - Making the plots";
+
+.\make-plots.ps1
