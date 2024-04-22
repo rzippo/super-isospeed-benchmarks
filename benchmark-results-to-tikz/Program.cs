@@ -7,15 +7,48 @@ using iso_bench_to_tikz;
 
 CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
-// ParseMinPlusIsoBenchmark("./minp-2024-02-23");
-// ParseMinPlusIsoBenchmark("./minp-2024-02-23-2");
-// ParseMinPlusIsoBenchmark("./minp-2024-02-26");
-ParseMinPlusIsoBenchmark("./minp-2024-02-29");
+var resultsDirectoryPath = ".";
+var forceOption = false;
 
-// ParseMaxPlusIsoBenchmark("./maxp-2023-03-29");
-
-void ParseMinPlusIsoBenchmark(string resultsPath)
+foreach (var arg in args)
 {
+    if (arg.StartsWith("--"))
+    {
+        switch (arg)
+        {
+            case "--force":
+                forceOption = true;
+                break;
+
+            default:
+                Console.WriteLine($"Option {arg} not recognized.");
+                System.Environment.Exit(1);
+                break;
+        }
+    }
+    else
+    {
+        if(Directory.Exists(arg))
+            resultsDirectoryPath = arg;
+        else
+        {
+            Console.WriteLine($"Not a path to a folder: {arg}");
+            System.Environment.Exit(1);
+            break;
+        }
+    }
+}
+
+var csvPaths = Directory.GetFiles(resultsDirectoryPath, "*-report.csv");
+
+foreach (var csvPath in csvPaths)
+{
+    if (!File.Exists(csvPath))
+        throw new InvalidOperationException($"File \"{csvPath}\" does not exist!");
+
+    var benchmarkName = Path.GetFileName(csvPath).Replace("-report.csv", "");
+
+    // constants
     var DirectMethod = "Direct";
     var InverseMethod = "Inverse";
     var IsospeedMethod = "Isospeed";
@@ -27,154 +60,111 @@ void ParseMinPlusIsoBenchmark(string resultsPath)
     var SuperIsospeedMethodLabel = "super-isospeed";
     var BestMethodLabel = "best";
 
-    ComparisonByCurveType("IsoConvolutionBalancedStaircaseBenchmarks");
-    ComparisonByCurveType("IsoConvolutionHorizontalStaircaseBenchmarks");
-    ComparisonByCurveType("IsoConvolutionVerticalStaircaseBenchmarks");
-    ComparisonByCurveType("IsoConvolutionHorizontalKTradeoffStaircaseBenchmarks");
+    using var reader = new StreamReader(csvPath);
 
-    void ComparisonByCurveType(string type)
+    var delimiter = File.ReadLines(csvPath).First().StartsWith("Method,") ? "," : ";";
+    var config = new CsvConfiguration(CultureInfo.InvariantCulture)
     {
-        var csvPath = Path.Combine(resultsPath, $"{type}-report.csv");
-        if (!File.Exists(csvPath))
-            return;
+        Delimiter = delimiter
+    };
+    using var csv = new CsvReader(reader, config);
 
-        using var reader = new StreamReader(csvPath);
+    var samples = csv.GetRecords<BenchmarkResult>().ToList();
+    var hasDirect = samples.Any(s => s.Method == DirectMethod);
+    var hasInverse = samples.Any(s => s.Method == InverseMethod);
 
-        var delimiter = File.ReadLines(csvPath).First().StartsWith("Method,") ? "," : ";";
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-        {
-            Delimiter = delimiter
-        };
-        using var csv = new CsvReader(reader, config);
-
-        var samples = csv.GetRecords<BenchmarkResult>().ToList();
-        var hasDirect = samples.Any(s => s.Method == DirectMethod);
-        var hasInverse = samples.Any(s => s.Method == InverseMethod);
-
-        if (hasDirect)
+    if (hasDirect)
+    {
+        var directVsIsospeedTikzPath = Path.Combine(resultsDirectoryPath, $"{benchmarkName}-direct-isospeed.tikz");
+        if (!File.Exists(directVsIsospeedTikzPath) || forceOption)
         {
             var directVsIsospeedValues = GetComparisonValues(samples, DirectMethod, IsospeedMethod);
-            var directVsIsospeedTikz = TikzPlotter.PlotTikzComparison(
+            var directVsIsospeedTikzContent = TikzPlotter.PlotTikzComparison(
                 directVsIsospeedValues, DirectMethodLabel, IsospeedMethodLabel,
-                new TikzPlotterSettings{ FontSize = FontSize.tiny });
-            var directVsIsospeedOutTikz = Path.Combine(resultsPath, $"{type}-direct-isospeed.tikz");
-            File.WriteAllText(directVsIsospeedOutTikz, directVsIsospeedTikz);
-
-            var directVsSuperIsospeedValues = GetComparisonValues(samples, DirectMethod, SuperIsospeedMethod);
-            var directVsSuperIsospeedTikz = TikzPlotter.PlotTikzComparison(
-                directVsSuperIsospeedValues, DirectMethodLabel, SuperIsospeedMethodLabel,
-                new TikzPlotterSettings{ FontSize = FontSize.tiny });
-            var directVsSuperIsospeedOutTikz = Path.Combine(resultsPath, $"{type}-direct-superIsospeed.tikz");
-            File.WriteAllText(directVsSuperIsospeedOutTikz, directVsSuperIsospeedTikz);
+                new TikzPlotterSettings { FontSize = FontSize.tiny });
+            File.WriteAllText(directVsIsospeedTikzPath, directVsIsospeedTikzContent);
         }
 
-        if (hasInverse)
+        var directVsSuperIsospeedPath = Path.Combine(resultsDirectoryPath, $"{benchmarkName}-direct-superIsospeed.tikz");
+        if (!File.Exists(directVsSuperIsospeedPath) || forceOption)
+        {
+            var directVsSuperIsospeedValues = GetComparisonValues(samples, DirectMethod, SuperIsospeedMethod);
+            var directVsSuperIsospeedTikzContent = TikzPlotter.PlotTikzComparison(
+                directVsSuperIsospeedValues, DirectMethodLabel, SuperIsospeedMethodLabel,
+                new TikzPlotterSettings { FontSize = FontSize.tiny });
+            File.WriteAllText(directVsSuperIsospeedPath, directVsSuperIsospeedTikzContent);
+        }
+    }
+
+    if (hasInverse)
+    {
+        var inverseVsIsospeedPath = Path.Combine(resultsDirectoryPath, $"{benchmarkName}-inverse-isospeed.tikz");
+        if (!File.Exists(inverseVsIsospeedPath) || forceOption)
         {
             var inverseVsIsospeedValues = GetComparisonValues(samples, InverseMethod, IsospeedMethod);
-            var inverseVsIsospeedTikz = TikzPlotter.PlotTikzComparison(
+            var inverseVsIsospeedTikzContent = TikzPlotter.PlotTikzComparison(
                 inverseVsIsospeedValues, InverseMethodLabel, IsospeedMethodLabel,
-                new TikzPlotterSettings{ FontSize = FontSize.tiny });
-            var inverseVsIsospeedOutTikz = Path.Combine(resultsPath, $"{type}-inverse-isospeed.tikz");
-            File.WriteAllText(inverseVsIsospeedOutTikz, inverseVsIsospeedTikz);
-
-            var inverseVsSuperIsospeedValues = GetComparisonValues(samples, InverseMethod, SuperIsospeedMethod);
-            var inverseVsSuperIsospeedTikz = TikzPlotter.PlotTikzComparison(
-                inverseVsSuperIsospeedValues, InverseMethodLabel, SuperIsospeedMethodLabel,
-                new TikzPlotterSettings{ FontSize = FontSize.tiny });
-            var inverseVsSuperIsospeedOutTikz = Path.Combine(resultsPath, $"{type}-inverse-superIsospeed.tikz");
-            File.WriteAllText(inverseVsSuperIsospeedOutTikz, inverseVsSuperIsospeedTikz);
+                new TikzPlotterSettings { FontSize = FontSize.tiny });
+            File.WriteAllText(inverseVsIsospeedPath, inverseVsIsospeedTikzContent);
         }
 
-        if (hasDirect && hasInverse)
+        var inverseVsSuperIsospeedPath = Path.Combine(resultsDirectoryPath, $"{benchmarkName}-inverse-superIsospeed.tikz");
+        if (!File.Exists(inverseVsSuperIsospeedPath) || forceOption)
+        {
+            var inverseVsSuperIsospeedValues = GetComparisonValues(samples, InverseMethod, SuperIsospeedMethod);
+            var inverseVsSuperIsospeedTikzContent = TikzPlotter.PlotTikzComparison(
+                inverseVsSuperIsospeedValues, InverseMethodLabel, SuperIsospeedMethodLabel,
+                new TikzPlotterSettings { FontSize = FontSize.tiny });
+            File.WriteAllText(inverseVsSuperIsospeedPath, inverseVsSuperIsospeedTikzContent);
+        }
+    }
+
+    if (hasDirect && hasInverse)
+    {
+        var inverseVsDirectPath = Path.Combine(resultsDirectoryPath, $"{benchmarkName}-inverse-direct.tikz");
+        if (!File.Exists(inverseVsDirectPath) || forceOption)
         {
             var inverseVsDirectValues = GetComparisonValues(samples, InverseMethod, DirectMethod);
             var inverseVsDirectTikz = TikzPlotter.PlotTikzComparison(
                 inverseVsDirectValues, InverseMethodLabel, DirectMethodLabel,
-                new TikzPlotterSettings{ FontSize = FontSize.tiny });
-            var inverseVsDirectOutTikz = Path.Combine(resultsPath, $"{type}-inverse-direct.tikz");
-            File.WriteAllText(inverseVsDirectOutTikz, inverseVsDirectTikz);
+                new TikzPlotterSettings { FontSize = FontSize.tiny });
+            File.WriteAllText(inverseVsDirectPath, inverseVsDirectTikz);
         }
+    }
 
-        if (hasDirect && hasInverse)
+    if (hasDirect && hasInverse)
+    {
+        var isospeedVsBestPath = Path.Combine(resultsDirectoryPath, $"{benchmarkName}-best-isospeed.tikz");
+        if(!File.Exists(isospeedVsBestPath) || forceOption)
         {
             var isospeedVsBestValues = GetComparisonValues_Best(samples, IsospeedMethod,
                 new List<string> { DirectMethod, InverseMethod });
             var isospeedVsBestTikz = TikzPlotter.PlotTikzComparison(
                 isospeedVsBestValues, BestMethodLabel, IsospeedMethodLabel,
                 new TikzPlotterSettings { FontSize = FontSize.tiny });
-            var isospeedVsBestOutTikz = Path.Combine(resultsPath, $"{type}-best-isospeed.tikz");
-            File.WriteAllText(isospeedVsBestOutTikz, isospeedVsBestTikz);
+            File.WriteAllText(isospeedVsBestPath, isospeedVsBestTikz);
+        }
 
+        var superIsospeedVsBestPath = Path.Combine(resultsDirectoryPath, $"{benchmarkName}-best-superIsospeed.tikz");
+        if(!File.Exists(superIsospeedVsBestPath) || forceOption)
+        {
             var superIsospeedVsBestValues = GetComparisonValues_Best(samples, SuperIsospeedMethod,
                 new List<string> { DirectMethod, InverseMethod });
             var superIsospeedVsBestTikz = TikzPlotter.PlotTikzComparison(
                 superIsospeedVsBestValues, BestMethodLabel, SuperIsospeedMethodLabel,
                 new TikzPlotterSettings { FontSize = FontSize.tiny });
-            var superIsospeedVsBestOutTikz = Path.Combine(resultsPath, $"{type}-best-superIsospeed.tikz");
-            File.WriteAllText(superIsospeedVsBestOutTikz, superIsospeedVsBestTikz);
+            File.WriteAllText(superIsospeedVsBestPath, superIsospeedVsBestTikz);
         }
+    }
 
+    var superIsospeedVsIsospeedPath = Path.Combine(resultsDirectoryPath, $"{benchmarkName}-superIsospeed-isospeed.tikz");
+    if(!File.Exists(superIsospeedVsIsospeedPath) || forceOption)
+    {
         var superIsospeedVsIsospeedValues = GetComparisonValues(samples, IsospeedMethod, SuperIsospeedMethod);
-        var superIsospeedVsIsospeedTikz = TikzPlotter.PlotTikzComparison(
+        var superIsospeedVsIsospeedTikzContent = TikzPlotter.PlotTikzComparison(
             superIsospeedVsIsospeedValues,IsospeedMethodLabel, SuperIsospeedMethodLabel,
             new TikzPlotterSettings { FontSize = FontSize.tiny });
-        var superIsospeedVsIsospeedOutTikz = Path.Combine(resultsPath, $"{type}-superIsospeed-isospeed.tikz");
-        File.WriteAllText(superIsospeedVsIsospeedOutTikz, superIsospeedVsIsospeedTikz);
-    }
-}
-
-void ParseMaxPlusIsoBenchmark(string resultsPath)
-{
-    var DirectMethod = "Direct";
-    var IsospeedMethod = "Isospeed";
-    var InversionMethod = "Inversion";
-
-    var DirectMethodLabel = "direct";
-    var IsospeedMethodLabel = "isospeed";
-    var InversionMethodLabel = "inverse";
-    var BestMethodLabel = "best";
-
-    ComparisonByCurveType("IsoMaxPlusConvolutionBalancedStaircaseBenchmarks");
-    ComparisonByCurveType("IsoMaxPlusConvolutionHorizontalStaircaseBenchmarks");
-    ComparisonByCurveType("IsoMaxPlusConvolutionVerticalStaircaseBenchmarks");
-    ComparisonByCurveType("IsoMaxPlusConvolutionHorizontalKTradeoffStaircaseBenchmarks");
-
-    void ComparisonByCurveType(string type)
-    {
-        var csvPath = Path.Combine(resultsPath, $"{type}-report.csv");
-        using var reader = new StreamReader(csvPath);
-
-        var delimiter = File.ReadLines(csvPath).First().StartsWith("Method,") ? "," : ";";
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-        {
-            Delimiter = delimiter
-        };
-        using var csv = new CsvReader(reader, config);
-
-        var samples = csv.GetRecords<BenchmarkResult>().ToList();
-        var maxpVsIsoValues = GetComparisonValues(samples, DirectMethod, IsospeedMethod);
-        var maxpVsIsoTikz = TikzPlotter.PlotTikzComparison(
-            maxpVsIsoValues, DirectMethodLabel, IsospeedMethodLabel);
-        var maxpVsIsoOutTikz = Path.Combine(resultsPath, $"{type}-maxp-iso.tikz");
-        File.WriteAllText(maxpVsIsoOutTikz, maxpVsIsoTikz);
-
-        var minpVsIsoValues = GetComparisonValues(samples, InversionMethod, IsospeedMethod);
-        var minpVsIsoTikz = TikzPlotter.PlotTikzComparison(
-            minpVsIsoValues, InversionMethodLabel, IsospeedMethodLabel);
-        var minpVsIsoOutTikz = Path.Combine(resultsPath, $"{type}-minp-iso.tikz");
-        File.WriteAllText(minpVsIsoOutTikz, minpVsIsoTikz);
-
-        var minpVsMaxpValues = GetComparisonValues(samples, InversionMethod, DirectMethod);
-        var minpVsMaxpTikz = TikzPlotter.PlotTikzComparison(
-            minpVsMaxpValues, InversionMethodLabel, DirectMethodLabel);
-        var minpVsMaxpOutTikz = Path.Combine(resultsPath, $"{type}-minp-maxp.tikz");
-        File.WriteAllText(minpVsMaxpOutTikz, minpVsMaxpTikz);
-
-        var isoVsBestValues = GetComparisonValues_Best(samples, IsospeedMethod, new List<string>{ DirectMethod, InversionMethod });
-        var isoVsBestTikz = TikzPlotter.PlotTikzComparison(
-            isoVsBestValues, BestMethodLabel, IsospeedMethodLabel);
-        var isoVsBestOutTikz = Path.Combine(resultsPath, $"{type}-best-iso.tikz");
-        File.WriteAllText(isoVsBestOutTikz, isoVsBestTikz);
+        File.WriteAllText(superIsospeedVsIsospeedPath, superIsospeedVsIsospeedTikzContent);
     }
 }
 
@@ -186,25 +176,16 @@ List<(decimal x, decimal y)> GetComparisonValues(List<BenchmarkResult> samples, 
         {
             var method1Sample = g.First(br => br.Method == method1)!;
             var m1TimeString = method1Sample.Median ?? method1Sample.Mean;
-            var m1Time = timeStringToDecimal(m1TimeString);
+            var m1Time = TimeStringToDecimal(m1TimeString);
 
             var method2Sample = g.First(br => br.Method == method2)!;
             var m2TimeString = method2Sample.Median ?? method2Sample.Mean;
-            var m2Time = timeStringToDecimal(m2TimeString);
+            var m2Time = TimeStringToDecimal(m2TimeString);
 
             return (x: m1Time, y: m2Time);
         })
         .ToList();
     return comparisonValues;
-
-    decimal timeStringToDecimal(string s)
-    {
-        var raw = decimal.Parse(s.Split(" ")[0]);
-        return s.EndsWith(" μs") ? raw / 1000:
-            s.EndsWith(" ms") ? raw :
-            s.EndsWith(" s") ? raw * 1_000 :
-            throw new InvalidOperationException($"Unrecognized unit: {s}");
-    }
 }
 
 List<(decimal x, decimal y)> GetComparisonValues_Best(List<BenchmarkResult> samples, string method1, List<string> otherMethods)
@@ -215,25 +196,25 @@ List<(decimal x, decimal y)> GetComparisonValues_Best(List<BenchmarkResult> samp
         {
             var method1Sample = g.First(br => br.Method == method1)!;
             var m1TimeString = method1Sample.Median ?? method1Sample.Mean;
-            var m1Time = timeStringToDecimal(m1TimeString);
+            var m1Time = TimeStringToDecimal(m1TimeString);
 
             var otherSamples = otherMethods.Select(m => {
                 var mSample = g.First(br => br.Method == m)!;
                 var mTimeString = mSample.Median ?? mSample.Mean;
-                var mTime = timeStringToDecimal(mTimeString);
+                var mTime = TimeStringToDecimal(mTimeString);
                 return mTime;
             });
             return (x: otherSamples.Min(), y: m1Time);
         })
         .ToList();
     return comparisonValues;
+}
 
-    decimal timeStringToDecimal(string s)
-    {
-        var raw = decimal.Parse(s.Split(" ")[0]);
-        return s.EndsWith(" μs") ? raw / 1000:
-            s.EndsWith(" ms") ? raw :
-            s.EndsWith(" s") ? raw * 1_000 :
-            throw new InvalidOperationException($"Unrecognized unit: {s}");
-    }
+decimal TimeStringToDecimal(string s)
+{
+    var raw = decimal.Parse(s.Split(" ")[0]);
+    return s.EndsWith(" μs") ? raw / 1000:
+        s.EndsWith(" ms") ? raw :
+        s.EndsWith(" s") ? raw * 1_000 :
+        throw new InvalidOperationException($"Unrecognized unit: {s}");
 }
