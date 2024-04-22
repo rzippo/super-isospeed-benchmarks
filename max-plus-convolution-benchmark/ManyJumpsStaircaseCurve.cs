@@ -1,7 +1,7 @@
 ﻿using Unipi.Nancy.MinPlusAlgebra;
 using Unipi.Nancy.Numerics;
 
-namespace isomorphism_convolutions_bench;
+namespace max_plus_convolution_benchmark;
 
 public class ManyJumpsStaircaseCurve : Curve
 {
@@ -19,7 +19,7 @@ public class ManyJumpsStaircaseCurve : Curve
         TransientParams = transientParams;
         PeriodicParams = periodicParams;
     }
-    
+
     private static Curve BuildCurve(List<Rational> transientParams, List<Rational> periodicParams)
     {
         if (transientParams.Count != 0 && transientParams.Count % 3 != 0)
@@ -28,9 +28,9 @@ public class ManyJumpsStaircaseCurve : Curve
             throw new ArgumentException($"Invalid number of periodicParams: {transientParams.Count}");
         if (transientParams.Any(p => p <= 0) || periodicParams.Any(p => p <= 0))
             throw new ArgumentException($"All params must be strictly positive");
-        
-        var elements = new List<Element>(); 
-        
+
+        var elements = new List<Element>();
+
         var prevTime = Rational.Zero;
         var prevValue = Rational.Zero;
         var tParamIndex = 0;
@@ -72,14 +72,14 @@ public class ManyJumpsStaircaseCurve : Curve
         var sequence = elements.ToSequence();
 
         return new Curve(sequence, T, d, c);
-        
+
         Rational NextTransientParam()
         {
             var v = transientParams[tParamIndex];
             tParamIndex++;
             return v;
         }
-        
+
         Rational NextPeriodicParam()
         {
             var v = periodicParams[pParamIndex];

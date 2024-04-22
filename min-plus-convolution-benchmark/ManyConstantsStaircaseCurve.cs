@@ -1,7 +1,7 @@
 ﻿using Unipi.Nancy.MinPlusAlgebra;
 using Unipi.Nancy.Numerics;
 
-namespace isomorphism_convolutions_bench;
+namespace min_plus_convolution_benchmark;
 
 public class ManyConstantsStaircaseCurve : Curve
 {

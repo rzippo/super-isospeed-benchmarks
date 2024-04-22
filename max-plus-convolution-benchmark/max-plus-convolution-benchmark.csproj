@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-        <RootNamespace>max-plus-convolution-benchmark</RootNamespace>
+        <RootNamespace>max_plus_convolution_benchmark</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <DebugType>pdbonly</DebugType>
@@ -11,16 +11,16 @@
     </PropertyGroup>
 
     <PropertyGroup>
-      <DefineConstants>SANITY_CHECK</DefineConstants>
+        <DefineConstants>ALL_ALGS,SANITY_CHECK</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
-      <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.2" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.12"/>
+        <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.12"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\nancy\Nancy\Nancy\Nancy.csproj" />
+        <ProjectReference Include="..\nancy\Nancy\Nancy\Nancy.csproj"/>
     </ItemGroup>
 
 </Project>

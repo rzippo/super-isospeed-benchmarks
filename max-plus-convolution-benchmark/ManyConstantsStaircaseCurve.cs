@@ -1,7 +1,7 @@
 ﻿using Unipi.Nancy.MinPlusAlgebra;
 using Unipi.Nancy.Numerics;
 
-namespace isomorphism_convolutions_bench;
+namespace max_plus_convolution_benchmark;
 
 public class ManyConstantsStaircaseCurve : Curve
 {
@@ -19,7 +19,7 @@ public class ManyConstantsStaircaseCurve : Curve
         TransientParams = transientParams;
         PeriodicParams = periodicParams;
     }
-    
+
     private static Curve BuildCurve(List<Rational> transientParams, List<Rational> periodicParams)
     {
         if (transientParams.Count != 0 && transientParams.Count % 3 != 0)
@@ -28,9 +28,7 @@ public class ManyConstantsStaircaseCurve : Curve
             throw new ArgumentException($"Invalid number of periodicParams: {transientParams.Count}");
         if (transientParams.Any(p => p <= 0) || periodicParams.Any(p => p <= 0))
             throw new ArgumentException($"All params must be strictly positive");
-        
-        var elements = new List<Element>(); 
-        
+         var elements = new List<Element>(); 
         var prevTime = Rational.Zero;
         var prevValue = Rational.Zero;
         var tParamIndex = 0;
@@ -46,7 +44,7 @@ public class ManyConstantsStaircaseCurve : Curve
             var constantSegment = Segment.Constant(
                 prevTime + riseSegmentLenght,
                 prevTime + riseSegmentLenght + constantSegmentLenght, 
-                riseSegment.LeftLimitAtEndTime);
+               riseSegment.LeftLimitAtEndTime);
             elements.Add(point1);
             elements.Add(riseSegment);
             elements.Add(point2);
@@ -71,7 +69,7 @@ public class ManyConstantsStaircaseCurve : Curve
             var constantSegment = Segment.Constant(
                 prevTime + riseSegmentLenght,
                 prevTime + riseSegmentLenght + constantSegmentLenght, 
-                riseSegment.LeftLimitAtEndTime);
+               riseSegment.LeftLimitAtEndTime);
             elements.Add(point1);
             elements.Add(riseSegment);
             elements.Add(point2);
@@ -86,15 +84,13 @@ public class ManyConstantsStaircaseCurve : Curve
         var sequence = elements.ToSequence();
 
         return new Curve(sequence, T, d, c);
-        
-        Rational NextTransientParam()
+         Rational NextTransientParam()
         {
             var v = transientParams[tParamIndex];
             tParamIndex++;
             return v;
         }
-        
-        Rational NextPeriodicParam()
+         Rational NextPeriodicParam()
         {
             var v = periodicParams[pParamIndex];
             pParamIndex++;
