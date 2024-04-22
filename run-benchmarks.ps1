@@ -40,7 +40,7 @@ if(-not(Test-Path $resultsFolder)) {
 }
 
 Push-Location $resultsFolder
-& $minPlusBenchmarkExe --filter "*" > "run.log"
+& $minPlusBenchmarkExe --filter "*" 3>&1 2>&1 > "run.log"
 
 Pop-Location
 
