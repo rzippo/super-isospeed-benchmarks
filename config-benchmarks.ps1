@@ -154,7 +154,7 @@ function setJobs($programPath)
         # Both warmup and iterations are specified by the user
         $jobLine = "[SimpleJob(warmupCount: $warmupCount, iterationCount: $iterationCount)]"
     }
-    $programContent = $programContent -replace '\[SimpleJob\(.*?\)\]',$jobLine ;
+    $programContent = $programContent -replace '\[SimpleJob(?:\(.*?\))?\]',$jobLine ;
     $programContent | Out-File $programPath;
 }
 
