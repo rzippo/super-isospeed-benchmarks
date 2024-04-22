@@ -1,4 +1,4 @@
-﻿// This program uses top-level statements
+// This program uses top-level statements
 // See https://aka.ms/new-console-template for more information
 
 using System.Globalization;
@@ -32,6 +32,7 @@ using max_plus_convolution_benchmark;
                       $"\tnumberOfPairs: {Globals.TEST_COUNT}\n" +
                       $"\trngSeed: {Globals.RNG_SEED}\n" +
                       $"\trngMaxInteger: {Globals.RNG_MAX}\n" +
+                      $"\tlargestExtensionsFilterMode: {Globals.FILTER_EXTENSION}\n" +
                       $"\tlargestExtensionsLowerThreshold: {Globals.LARGE_EXTENSION_LCM_LOWER_THRESHOLD}\n" +
                       $"\tlargestExtensionsUpperThreshold: {Globals.LARGE_EXTENSION_LCM_UPPER_THRESHOLD}\n" +
                       $"\titerationCount: {iterationCount}\n" +
@@ -317,6 +318,7 @@ namespace max_plus_convolution_benchmark
         public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = FILTER_EXTENSION_ENUM.FILTER_BOTH;
 
         public enum FILTER_EXTENSION_ENUM {
+            // Does not use thresholds on largest k to filter pairs
             NO_FILTER,
             // Filters out pairs whose largest k is above the upper threshold
             FILTER_LARGER,
