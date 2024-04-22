@@ -1,3 +1,4 @@
+// This program uses top-level statements
 // See https://aka.ms/new-console-template for more information
 
 using System.Diagnostics;
@@ -23,7 +24,7 @@ using Unipi.Nancy.Numerics;
     var sanityCheck = false;
 #endif
 
-    var jobAnnotation = typeof(IsoConvolutionBalancedStaircaseBenchmarks)
+    var jobAnnotation = typeof(MinPlusConvolutionBalancedStaircaseBenchmarks)
         .GetCustomAttributes(typeof(SimpleJobAttribute), false)
         .FirstOrDefault() as SimpleJobAttribute;
     var iterationCount = jobAnnotation.Config.GetJobs().First().Run.IterationCount;
@@ -61,11 +62,11 @@ void SanityCheck(int n = 100)
     Console.WriteLine("Running sanity check");
 
     {
-        Console.WriteLine("IsoConvolutionBalancedStaircaseBenchmarks");
-        var testsCount = IsoConvolutionBalancedStaircaseBenchmarks.TestsCount;
-        IsoConvolutionBalancedStaircaseBenchmarks.TestsCount = n;
-        var benchmarkRunner = new IsoConvolutionBalancedStaircaseBenchmarks() { UseParallelism = true };
-        foreach (var pair in IsoConvolutionBalancedStaircaseBenchmarks.StairCurvePairs)
+        Console.WriteLine("MinPlusConvolutionBalancedStaircaseBenchmarks");
+        var testsCount = MinPlusConvolutionBalancedStaircaseBenchmarks.TestsCount;
+        MinPlusConvolutionBalancedStaircaseBenchmarks.TestsCount = n;
+        var benchmarkRunner = new MinPlusConvolutionBalancedStaircaseBenchmarks() { UseParallelism = true };
+        foreach (var pair in MinPlusConvolutionBalancedStaircaseBenchmarks.StairCurvePairs)
         {
             benchmarkRunner.Pair = pair;
             try
@@ -102,17 +103,17 @@ void SanityCheck(int n = 100)
             }
         }
 
-        IsoConvolutionBalancedStaircaseBenchmarks.TestsCount = testsCount;
+        MinPlusConvolutionBalancedStaircaseBenchmarks.TestsCount = testsCount;
         Console.WriteLine();
         Console.WriteLine();
     }
 
     {
-        Console.WriteLine("IsoConvolutionHorizontalStaircaseBenchmarks");
-        var testsCount = IsoConvolutionHorizontalStaircaseBenchmarks.TestsCount;
-        IsoConvolutionHorizontalStaircaseBenchmarks.TestsCount = n;
-        var benchmarkRunner = new IsoConvolutionHorizontalStaircaseBenchmarks() { UseParallelism = true };
-        foreach (var pair in IsoConvolutionHorizontalStaircaseBenchmarks.StairCurvePairs)
+        Console.WriteLine("MinPlusConvolutionHorizontalStaircaseBenchmarks");
+        var testsCount = MinPlusConvolutionHorizontalStaircaseBenchmarks.TestsCount;
+        MinPlusConvolutionHorizontalStaircaseBenchmarks.TestsCount = n;
+        var benchmarkRunner = new MinPlusConvolutionHorizontalStaircaseBenchmarks() { UseParallelism = true };
+        foreach (var pair in MinPlusConvolutionHorizontalStaircaseBenchmarks.StairCurvePairs)
         {
             benchmarkRunner.Pair = pair;
             try
@@ -149,17 +150,17 @@ void SanityCheck(int n = 100)
             }
         }
 
-        IsoConvolutionHorizontalStaircaseBenchmarks.TestsCount = testsCount;
+        MinPlusConvolutionHorizontalStaircaseBenchmarks.TestsCount = testsCount;
         Console.WriteLine();
         Console.WriteLine();
     }
 
     {
-        Console.WriteLine("IsoConvolutionVerticalStaircaseBenchmarks");
-        var testsCount = IsoConvolutionVerticalStaircaseBenchmarks.TestsCount;
-        IsoConvolutionVerticalStaircaseBenchmarks.TestsCount = n;
-        var benchmarkRunner = new IsoConvolutionVerticalStaircaseBenchmarks() { UseParallelism = true };
-        foreach (var pair in IsoConvolutionVerticalStaircaseBenchmarks.StairCurvePairs)
+        Console.WriteLine("MinPlusConvolutionVerticalStaircaseBenchmarks");
+        var testsCount = MinPlusConvolutionVerticalStaircaseBenchmarks.TestsCount;
+        MinPlusConvolutionVerticalStaircaseBenchmarks.TestsCount = n;
+        var benchmarkRunner = new MinPlusConvolutionVerticalStaircaseBenchmarks() { UseParallelism = true };
+        foreach (var pair in MinPlusConvolutionVerticalStaircaseBenchmarks.StairCurvePairs)
         {
             benchmarkRunner.Pair = pair;
             try
@@ -196,17 +197,17 @@ void SanityCheck(int n = 100)
             }
         }
 
-        IsoConvolutionVerticalStaircaseBenchmarks.TestsCount = testsCount;
+        MinPlusConvolutionVerticalStaircaseBenchmarks.TestsCount = testsCount;
         Console.WriteLine();
         Console.WriteLine();
     }
     
     {
-        Console.WriteLine("IsoConvolutionHorizontalKTradeoffStaircaseBenchmarks");
-        var testsCount = IsoConvolutionHorizontalKTradeoffStaircaseBenchmarks.TestsCount;
-        IsoConvolutionHorizontalKTradeoffStaircaseBenchmarks.TestsCount = n;
-        var benchmarkRunner = new IsoConvolutionHorizontalKTradeoffStaircaseBenchmarks() { UseParallelism = true };
-        foreach (var pair in IsoConvolutionHorizontalKTradeoffStaircaseBenchmarks.StairCurvePairs)
+        Console.WriteLine("MinPlusConvolutionHorizontalKTradeoffStaircaseBenchmarks");
+        var testsCount = MinPlusConvolutionHorizontalKTradeoffStaircaseBenchmarks.TestsCount;
+        MinPlusConvolutionHorizontalKTradeoffStaircaseBenchmarks.TestsCount = n;
+        var benchmarkRunner = new MinPlusConvolutionHorizontalKTradeoffStaircaseBenchmarks() { UseParallelism = true };
+        foreach (var pair in MinPlusConvolutionHorizontalKTradeoffStaircaseBenchmarks.StairCurvePairs)
         {
             benchmarkRunner.Pair = pair;
             try
@@ -243,7 +244,7 @@ void SanityCheck(int n = 100)
             }
         }
 
-        IsoConvolutionVerticalStaircaseBenchmarks.TestsCount = testsCount;
+        MinPlusConvolutionVerticalStaircaseBenchmarks.TestsCount = testsCount;
         Console.WriteLine();
         Console.WriteLine();
     }
@@ -345,8 +346,8 @@ public static class Globals {
 #if PROFILE
 [EtwProfiler]
 #endif
-[SimpleJob(warmupCount: 0, iterationCount: 1)]
-public class IsoConvolutionBalancedStaircaseBenchmarks
+[SimpleJob()]
+public class MinPlusConvolutionBalancedStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
     public static int MaxNumeratorDenominator = Globals.RNG_MAX;
@@ -437,8 +438,8 @@ public class IsoConvolutionBalancedStaircaseBenchmarks
 #if PROFILE
 [EtwProfiler]
 #endif
-[SimpleJob(warmupCount: 0, iterationCount: 1)]
-public class IsoConvolutionHorizontalStaircaseBenchmarks
+[SimpleJob()]
+public class MinPlusConvolutionHorizontalStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
     public static int MaxNumeratorDenominator = Globals.RNG_MAX;
@@ -550,8 +551,8 @@ public class IsoConvolutionHorizontalStaircaseBenchmarks
 #if PROFILE
 [EtwProfiler]
 #endif
-[SimpleJob(warmupCount: 0, iterationCount: 1)]
-public class IsoConvolutionVerticalStaircaseBenchmarks
+[SimpleJob()]
+public class MinPlusConvolutionVerticalStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
     public static int MaxNumeratorDenominator = Globals.RNG_MAX;
@@ -664,8 +665,8 @@ public class IsoConvolutionVerticalStaircaseBenchmarks
 #if PROFILE
 [EtwProfiler]
 #endif
-[SimpleJob(warmupCount: 0, iterationCount: 1)]
-public class IsoConvolutionHorizontalKTradeoffStaircaseBenchmarks
+[SimpleJob()]
+public class MinPlusConvolutionHorizontalKTradeoffStaircaseBenchmarks
 {
     public static int TestsCount = Globals.TEST_COUNT;
     public static int MaxNumeratorDenominator = Globals.RNG_MAX;
