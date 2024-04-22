@@ -23,7 +23,7 @@ using min_plus_convolution_benchmark;
     var jobAnnotation = typeof(MinPlusConvolutionBalancedStaircaseBenchmarks)
         .GetCustomAttributes(typeof(SimpleJobAttribute), false)
         .FirstOrDefault() as SimpleJobAttribute;
-    var iterationCount = jobAnnotation.Config.GetJobs().First().Run.IterationCount;
+    var iterationCount = jobAnnotation!.Config.GetJobs().First().Run.IterationCount;
     var warmupCount = jobAnnotation.Config.GetJobs().First().Run.WarmupCount;
 
     Console.WriteLine("(min,+) convolution benchmarks");
