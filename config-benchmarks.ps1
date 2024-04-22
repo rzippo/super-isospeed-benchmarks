@@ -41,18 +41,18 @@ param (
     [UInt64]
     $rngMaxInteger = 100,
 
-    # When pairs of curves are generated, they are filtered so that the largest between k_{d_f}, k_{d_g}, k_{c_f} and k_{c_g} is above this threshold.
+    # If set greater than 0, when pairs of curves are generated, they are filtered so that the largest between k_{d_f}, k_{d_g}, k_{c_f} and k_{c_g} is above this threshold.
     # This is used to ensure the pair has some significance as runtime to be optimized.
     # However, with a larger threshold, the benchmark runtime may grow too much, becoming impractical.
     [Parameter()]
-    [UInt64]
+    [Int64]
     $largestExtensionsLowerThreshold = 50,
 
-    # When pairs of curves are generated, they are filtered so that the largest between k_{d_f}, k_{d_g}, k_{c_f} and k_{c_g} is below threshold.
+    # If set greater than 0, when pairs of curves are generated, they are filtered so that the largest between k_{d_f}, k_{d_g}, k_{c_f} and k_{c_g} is below threshold.
     # This is used to keep the benchmark runtime from growing too much.
     # However, with a larger threshold, more significant examples of performance improvement can be found.
     [Parameter()]
-    [UInt64]
+    [Int64]
     $largestExtensionsUpperThreshold = 500,
 
     # If set greater or equal than 0, all benchmarks are set to run with the given number of warmup runs.
@@ -134,17 +134,33 @@ function setRngMaxInteger($programPath)
     $programContent | Out-File -NoNewline $programPath;
 }
 
-function setLargestExtensionsLowerThreshold($programPath)
+function setLargestExtensionsThresholds($programPath)
 {
     $programContent = (Get-Content -Raw $programPath);
-    $programContent = $programContent -replace 'public const int LARGE_EXTENSION_LCM_LOWER_THRESHOLD = \d+;',"public const int LARGE_EXTENSION_LCM_LOWER_THRESHOLD = $largestExtensionsLowerThreshold;"
-    $programContent | Out-File -NoNewline $programPath;
-}
-
-function setLargestExtensionsUpperThreshold($programPath)
-{
-    $programContent = (Get-Content -Raw $programPath);
-    $programContent = $programContent -replace 'public const int LARGE_EXTENSION_LCM_UPPER_THRESHOLD = \d+;',"public const int LARGE_EXTENSION_LCM_UPPER_THRESHOLD = $largestExtensionsUpperThreshold;"
+    if(($largestExtensionsLowerThreshold -gt 0) -and ($largestExtensionsUpperThreshold -gt 0))
+    {
+        # both filters enabled
+        $programContent = $programContent -replace 'public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = [\w\.]+;',"public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = FILTER_EXTENSION_ENUM.FILTER_BOTH;"
+        $programContent = $programContent -replace 'public const int LARGE_EXTENSION_LCM_LOWER_THRESHOLD = \d+;',"public const int LARGE_EXTENSION_LCM_LOWER_THRESHOLD = $largestExtensionsLowerThreshold;"
+        $programContent = $programContent -replace 'public const int LARGE_EXTENSION_LCM_UPPER_THRESHOLD = \d+;',"public const int LARGE_EXTENSION_LCM_UPPER_THRESHOLD = $largestExtensionsUpperThreshold;"
+    }
+    elseif ($largestExtensionsLowerThreshold -gt 0) 
+    {
+        # only lower threshold enabled
+        $programContent = $programContent -replace 'public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = [\w\.]+;',"public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = FILTER_EXTENSION_ENUM.FILTER_SMALLER;"
+        $programContent = $programContent -replace 'public const int LARGE_EXTENSION_LCM_LOWER_THRESHOLD = \d+;',"public const int LARGE_EXTENSION_LCM_LOWER_THRESHOLD = $largestExtensionsLowerThreshold;"
+    }
+    elseif ($largestExtensionsUpperThreshold -gt 0)
+    {
+        # only upper threshold enabled
+        $programContent = $programContent -replace 'public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = [\w\.]+;',"public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = FILTER_EXTENSION_ENUM.FILTER_LARGER;"
+        $programContent = $programContent -replace 'public const int LARGE_EXTENSION_LCM_LOWER_THRESHOLD = \d+;',"public const int LARGE_EXTENSION_LCM_LOWER_THRESHOLD = $largestExtensionsLowerThreshold;"
+    }
+    else
+    {
+        # does not filter
+        $programContent = $programContent -replace 'public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = [\w\.]+;',"public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = FILTER_EXTENSION_ENUM.NO_FILTER;"
+    }
     $programContent | Out-File -NoNewline $programPath;
 }
 
@@ -177,10 +193,14 @@ setSanityCheck $minPlusCsprojPath;
 setNumberOfPairs $minPlusProgramPath;
 setRngSeed $minPlusProgramPath;
 setRngMaxInteger $minPlusProgramPath;
-setLargestExtensionsLowerThreshold $minPlusProgramPath;
-setLargestExtensionsUpperThreshold $minPlusProgramPath;
+setLargestExtensionsThresholds $minPlusProgramPath;
 setJobs $minPlusProgramPath;
 
 # Skip (max,+) until Program.cs is updated
 
-# setSanityCheck $maxPlusCsprojPath;
+setSanityCheck $maxPlusCsprojPath;
+setNumberOfPairs $maxPlusProgramPath;
+setRngSeed $maxPlusProgramPath;
+setRngMaxInteger $maxPlusProgramPath;
+setLargestExtensionsThresholds $maxPlusProgramPath;
+setJobs $maxPlusProgramPath;
