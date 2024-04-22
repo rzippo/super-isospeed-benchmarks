@@ -21,7 +21,7 @@ Write-Host "Building benchmark"
 $minPlusBenchmarkRoot = "$PSScriptRoot/min-plus-convolution-benchmark"
 $minPlusBenchmarkProj = "$minPlusBenchmarkRoot/min-plus-convolution-benchmark.csproj"
 
-dotnet publish -c Release $minPlusBenchmarkProj
+$dotnetOutput = dotnet publish -c Release $minPlusBenchmarkProj;
 
 if($IsWindows) {
     $minPlusBenchmarkExe = "$minPlusBenchmarkRoot/bin/Release/net8.0/publish/min-plus-convolution-benchmark.exe"
@@ -41,6 +41,14 @@ if(-not(Test-Path $resultsFolder)) {
 
 Push-Location $resultsFolder
 & $minPlusBenchmarkExe --filter "*" 3>&1 2>&1 > "run.log"
+
+$benchmarkDotNetLog = Get-ChildItem -Path "$resultsFolder/BenchmarkDotNet.Artifacts/" -Filter "BenchmarkRun*.log";
+$benchmarkDotNetLog | Move-Item -Destination $resultsFolder;
+
+$benchmarkDotNetOutput = Get-ChildItem -Path "$resultsFolder/BenchmarkDotNet.Artifacts/results/";
+$benchmarkDotNetOutput | Move-Item -Destination $resultsFolder;
+
+Remove-Item -Recurse "$resultsFolder/BenchmarkDotNet.Artifacts/"
 
 Pop-Location
 
