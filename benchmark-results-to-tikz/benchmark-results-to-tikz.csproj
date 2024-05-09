@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CsvHelper" Version="30.0.1" />
+      <ProjectReference Include="..\benchmark-results-model\benchmark-results-model.csproj" />
     </ItemGroup>
-
+    
 </Project>

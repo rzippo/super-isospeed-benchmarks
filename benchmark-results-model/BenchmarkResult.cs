@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-namespace iso_bench_to_tikz;
+namespace benchmark_results_model;
 
 // [Delimiter(",")]
 [Delimiter(";")]
