@@ -15,6 +15,8 @@ param (
     $force = $false
 )
 
+$ErrorActionPreference = "Stop";
+
 Write-Host " -- Making plots from results";
 Write-Host " --- Making .tikz plots";
 
@@ -81,7 +83,10 @@ foreach ($tikzFile in $tikzFiles)
 
     if(-not $skip)
     {
-        & $tikzToPdfExe $tikzFile --png
+        & $tikzToPdfExe $tikzFile --png;
+        if($LASTEXITCODE -ne 0) {
+            throw "STOPPING - Program call failed: $tikzToPdfExe";
+        }
     }
 }
 Write-Host "`r`t $tikzFilesTotal of $tikzFilesTotal"
