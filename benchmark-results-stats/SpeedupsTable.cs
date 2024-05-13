@@ -1,5 +1,5 @@
 
-public static class SpeedupsTable
+public static class PercentilesUtil
 {
 
     /// <summary>
