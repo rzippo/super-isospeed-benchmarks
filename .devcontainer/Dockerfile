@@ -23,7 +23,6 @@ ENV DOTNET_ROOT="/home/texlive/.dotnet"
 RUN rm /home/texlive/dotnet-install.sh
 
 ## Add project-specific texlive packages
-RUN tlmgr init-usertree
 RUN tlmgr --usermode install \
     pgf \
     pgfplots \
