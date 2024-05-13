@@ -1,4 +1,4 @@
-FROM rzippo/texlive-full:may-2024
+FROM rzippo/texlive-basic:may-2024
 
 USER root
 
@@ -21,3 +21,11 @@ ENV DOTNET_ROOT="/home/texlive/.dotnet"
 
 ## Cleanup
 RUN rm /home/texlive/dotnet-install.sh
+
+## Add project-specific texlive packages
+RUN tlmgr init-usertree
+RUN tlmgr --usermode install \
+    pgf \
+    pgfplots \
+    xcolor \
+    preview
