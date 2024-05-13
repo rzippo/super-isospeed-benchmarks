@@ -41,7 +41,7 @@ public static class SpeedupsTable
         var results = new List<decimal>();
         foreach(var percentile in percentiles)
         {
-            var index = (int) Math.Ceiling((decimal) percentile * N / 100);
+            var index = (int) Math.Ceiling((decimal) percentile * N / 100) - 1;
             results.Add(speedups[index]);
         }
         return results;
