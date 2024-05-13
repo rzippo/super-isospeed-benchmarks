@@ -2,6 +2,9 @@
     "recommendations": [
         "mechatroner.rainbow-csv",
         "grapecity.gc-excelviewer",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "ms-vscode.powershell"
     ]
 }

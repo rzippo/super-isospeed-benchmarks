@@ -2,6 +2,13 @@ FROM rzippo/texlive-basic:may-2024
 
 USER root
 
+## Add project-specific texlive packages
+RUN tlmgr install \
+    pgf \
+    pgfplots \
+    xcolor \
+    preview
+
 # Add powershell 7.4, using deb package
 RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.2/powershell_7.4.2-1.deb_amd64.deb && \
     dpkg -i powershell_7.4.2-1.deb_amd64.deb
@@ -21,10 +28,3 @@ ENV DOTNET_ROOT="/home/texlive/.dotnet"
 
 ## Cleanup
 RUN rm /home/texlive/dotnet-install.sh
-
-## Add project-specific texlive packages
-RUN tlmgr --usermode install \
-    pgf \
-    pgfplots \
-    xcolor \
-    preview
