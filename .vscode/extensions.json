@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "mechatroner.rainbow-csv",
+        "grapecity.gc-excelviewer",
+        "ms-azuretools.vscode-docker"
+    ]
+}
