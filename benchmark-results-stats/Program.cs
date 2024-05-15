@@ -208,8 +208,6 @@ foreach (var csvPath in csvPaths)
 }
 
 // write table to csv
-using (var writer = new StreamWriter(outputCsvPath))
-using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-{
-    csv.WriteRecords(speedupsTable);
-}
+using var writer = new StreamWriter(outputCsvPath);
+using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+csv.WriteRecords(speedupsTable);
