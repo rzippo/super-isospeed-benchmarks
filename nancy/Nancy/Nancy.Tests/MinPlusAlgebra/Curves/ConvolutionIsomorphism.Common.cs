@@ -553,5 +553,7 @@ public partial class ConvolutionIsomorphism
             pseudoPeriodLength: 2,
             pseudoPeriodHeight: 1
         ),
+        new Curve(baseSequence: new Sequence(new List<Element>{ new Point(0,3), new Segment(0,4,3,5), new Point(4,29), new Segment(4,10,29,9), new Point(10,86), new Segment(10,19,86,7) }), pseudoPeriodStart: 4, pseudoPeriodLength: 15, pseudoPeriodHeight: 126),
+        new Curve(baseSequence: new Sequence(new List<Element>{ new Point(0,3), new Segment(0,6,3,9), new Point(6,64), new Segment(6,14,64,8), new Point(14,135), new Segment(14,20,135,5) }), pseudoPeriodStart: 6, pseudoPeriodLength: 14, pseudoPeriodHeight: 108),
     };
 }
