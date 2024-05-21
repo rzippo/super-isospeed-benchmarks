@@ -303,7 +303,7 @@ namespace max_plus_convolution_benchmark
 
         public const int RNG_SEED = 4321;
 
-        public const int RNG_MAX = 10;
+        public const int RNG_MAX = 100;
 
         public const FILTER_VARIATION_ENUM FILTER_VARIATION = FILTER_VARIATION_ENUM.NO_FILTER;
 
@@ -315,7 +315,7 @@ namespace max_plus_convolution_benchmark
 
         public const int LARGE_VARIATION_MULTIPLIER = 100;
 
-        public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = FILTER_EXTENSION_ENUM.FILTER_LARGER;
+        public const FILTER_EXTENSION_ENUM FILTER_EXTENSION = FILTER_EXTENSION_ENUM.FILTER_BOTH;
 
         public enum FILTER_EXTENSION_ENUM {
             // Does not use thresholds on largest k to filter pairs
@@ -329,7 +329,7 @@ namespace max_plus_convolution_benchmark
         };
 
         public const int LARGE_EXTENSION_LCM_UPPER_THRESHOLD = 500;
-        public const int LARGE_EXTENSION_LCM_LOWER_THRESHOLD = -1;
+        public const int LARGE_EXTENSION_LCM_LOWER_THRESHOLD = 50;
 
         public static bool FilterByVariation(Curve f, Curve g)
         {
@@ -411,7 +411,7 @@ namespace max_plus_convolution_benchmark
 #if PROFILE
 [EtwProfiler]
 #endif
-    [SimpleJob(warmupCount: 0, iterationCount: 1)]
+    [SimpleJob()]
     public class MaxPlusConvolutionBalancedStaircaseBenchmarks
     {
         public static int TestsCount = Globals.TEST_COUNT;
@@ -491,7 +491,7 @@ namespace max_plus_convolution_benchmark
 #if PROFILE
 [EtwProfiler]
 #endif
-    [SimpleJob(warmupCount: 0, iterationCount: 1)]
+    [SimpleJob()]
     public class MaxPlusConvolutionHorizontalStaircaseBenchmarks
     {
         public static int TestsCount = Globals.TEST_COUNT;
@@ -568,7 +568,7 @@ namespace max_plus_convolution_benchmark
 #if PROFILE
 [EtwProfiler]
 #endif
-    [SimpleJob(warmupCount: 0, iterationCount: 1)]
+    [SimpleJob()]
     public class MaxPlusConvolutionVerticalStaircaseBenchmarks
     {
         public static int TestsCount = Globals.TEST_COUNT;
@@ -646,7 +646,7 @@ namespace max_plus_convolution_benchmark
 #if PROFILE
 [EtwProfiler]
 #endif
-    [SimpleJob(warmupCount: 0, iterationCount: 1)]
+    [SimpleJob()]
     public class MaxPlusConvolutionHorizontalKTradeoffStaircaseBenchmarks
     {
         public static int TestsCount = Globals.TEST_COUNT;
