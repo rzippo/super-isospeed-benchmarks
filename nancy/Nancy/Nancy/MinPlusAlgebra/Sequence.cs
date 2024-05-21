@@ -2689,24 +2689,17 @@ public sealed class Sequence : IEquatable<Sequence>, IToCodeString, IStableHashC
 
             if (cutCeiling != Rational.PlusInfinity)
             {
-                if (isCeilingIncluded)
+                var firstSafeCeiling = elementPairs
+                    .Select(p => ConvolutionStartingPoint(p.a, p.b))
+                    .Where(p => p.value > cutCeiling)
+                    .Select(p => new (Rational time, Rational value)?(p))
+                    .MinBy(p => p?.time)
+                    ?.value;
+                
+                if (firstSafeCeiling != null)
                 {
-                    var firstSafeCeiling = elementPairs
-                        .Select(p => ConvolutionStartingPoint(p.a, p.b))
-                        .Where(p => p.value > cutCeiling)
-                        .Select(p => new (Rational time, Rational value)?(p))
-                        .MinBy(p => p?.time)
-                        ?.value;
-                    
-                    if (firstSafeCeiling != null)
-                    {
-                        elementPairs = elementPairs 
-                            .Where(p => ConvolutionStartingValue(p.a, p.b) <= firstSafeCeiling);
-                    }
-                }
-                else
-                {
-                    elementPairs = elementPairs.Where(p =>  ConvolutionStartingValue(p.a, p.b) <= cutCeiling);
+                    elementPairs = elementPairs 
+                        .Where(p => ConvolutionStartingValue(p.a, p.b) <= firstSafeCeiling);
                 }
                 
                 (Rational time, Rational value) ConvolutionStartingPoint(Element ea, Element eb)

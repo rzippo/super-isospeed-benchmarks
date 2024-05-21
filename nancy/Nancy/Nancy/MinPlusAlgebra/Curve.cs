@@ -5492,7 +5492,6 @@ public class Curve : IToCodeString, IStableHashCode
                     ? f.Cut(tf, fCutEnd_direct, isEndIncluded: false, settings: settings)
                     : f.Cut(tf, fCutEnd_iso, isEndIncluded: true, settings: settings);
 
-
                 var gCutEnd_direct = tg + lcm_d + d;
                 var gCutEnd_iso = tg + 2 * k_c_g * d_g;
                 var gCut = gCutEnd_direct <= gCutEnd_iso 
