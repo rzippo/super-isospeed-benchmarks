@@ -95,6 +95,10 @@ Write-Host " - Running the benchmarks";
 
 .\run-benchmarks.ps1
 
+Write-Host " - Making the speedup tables";
+
+.\make-stats.ps1
+
 Write-Host " - Making the plots";
 
 .\make-plots.ps1
