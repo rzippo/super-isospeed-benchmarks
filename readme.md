@@ -8,25 +8,56 @@ Put your paper here
 # How to use
 
 Make sure your system meets the requirements, then run the `run-all.ps1` script.
-When it's done, you can find the results in 📁`results`.
+It will run all the computations and, when it's done, you can find the results in 📁`results`.
 
 The default setup of the repository is the exact same one used to produce the plots in the paper.
-It may take _quite a while_.
+
+It may take _quite a while_: on our machine, it took 25 days to run the benchmarks shown in the paper.
 Obviously, your results should be a little different depending on how much your machine differs from ours, but the relative performance of the algorithms should be the same.
 
-To reduce the computation time (but get different results), you can
-- **Explain sanity check and how to skip it.**
-- **Explain how to reduce the number of convolutions.**
-- **Explain how to heuristically reduce the time taken by each convolution.**
+The "raw" results from our benchmarks are already in 📁`results`.
+You can check the output from [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) and, to produce the tables and plots shown in the table, run
+```pwsh
+  make-stats.ps1
+  make-plots.ps1
+```
 
-You can change the above using 💻 `config-benchmarks.ps1` to the above easily.
+## Reducing the computation time
+
+If you would like to run similar but cheaper benchmarks, there are different things you can do to reduce the computation time, at the cost of having less precise or less significant results.
+
+- **Number of pairs**. 
+  In the default configuration, for each scenario we generate 100 pairs of curves for the benchmark. 
+  You can tune this number with the `-numberOfPairs` option.
+
+- **Number of repetitions**.
+  In the default configuration, the [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) framework will automatically determine how many times to run each convolution in order to accurately measure its runtime, removing noise (e.g. garbage collection, just in time compilation) and statistical errors.
+  You can disable this behavior with the `-warmupCount` and `-iterationCount` options, which allow you to set the number of repetitions.
+  
+- **Heuristic for computation size**.
+  We use an heuristic to avoid computations that are too small or too large.
+  For each generated pair, we compute its largest extension multiplier, and if it is below `-largestExtensionsLowerThreshold` (by default, set to 50) or above `-largestExtensionsUpperThreshold` (by default, set to 500) the pair is discarded.
+
+- **Sanity check**.
+  In the event the implementation had any bugs left, we run a sanity check before the benchmark phase.
+  This check computes each convolution with the different methods, and checks that they all return the same result.
+  You can control whether this check is performed or not with the `-sanityCheck` option.
+
+You can change the above using 💻 `config-benchmarks.ps1` before 💻 `run-benchmarks.ps1`, or directly through ✨ `run-all.ps1`.
+For example:
+```pwsh
+./run-all.ps1 -numberOfPairs 10 -warmupCount 0 -iterationCount 1 -largestExtensionsLowerThreshold 5 -largestExtensionsUpperThreshold 30 -sanityCheck $false
+```
+This command should run for 30 minutes at most, and from its results you should be able to see improvements up to 10x.
 
 # Requirements
 - .NET 8.0 SDK
 - PowerShell
 - LaTeX
 
-All of the above are cross-platform.
+All of the above are cross-platform. 
+
+This repository also provides a [devcontainer](https://code.visualstudio.com/docs/devcontainers/containers) that has all of the above installed and configured.
 
 # Repository structure
 
@@ -57,6 +88,8 @@ The scripts below are all PowerShell scripts, and need to be launched from a Pow
   - Configures the benchmarks. Running it with no args restores the default config, which is the same used in the paper.
 - 💻 `run-benchmarks.ps1`
   - Runs all benchmarks, saving the results in 📁 `results`.
+- 💻 `make-stats.ps1`
+  - Makes `speedups.csv` tables for all results in 📁 `results`.
 - 💻 `make-plots.ps1`
   - Makes `.tikz` plots for all results in 📁 `results`. 
   - Will leave `.tikz`, `.pdf` and `.png` files in the same folder as the benchmark they refer to.
