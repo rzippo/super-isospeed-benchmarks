@@ -13,7 +13,7 @@ It will run all the computations and, when it's done, you can find the results i
 The default setup of the repository is the exact same one used to produce the plots in the paper.
 
 It may take _quite a while_: on our machine, it took 25 days to run the benchmarks shown in the paper.
-Obviously, your results should be a little different depending on how much your machine differs from ours, but the relative performance of the algorithms should be the same.
+Obviously, your results should be a little different depending on how much your machine differs from ours, but the relative performance of the algorithms should be approximately the same.
 
 The "raw" results from our benchmarks are already in 📁`results`.
 You can check the output from [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) and, to produce the tables and plots shown in the table, run
